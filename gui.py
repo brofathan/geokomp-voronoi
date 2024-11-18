@@ -1,8 +1,6 @@
 import tkinter as tk
 
-from voronoi import Voronoi
-from voronoi import Point
-from voronoi import largest_circle
+from voronoi import Voronoi, Point
 
 class MainWindow:
     # radius of drawn points on canvas
@@ -78,9 +76,8 @@ class MainWindow:
 
             # Get and draw the largest circle(s) from the Voronoi diagram
 
-            vertices = vp.print_vertices()
-            circle = largest_circle(points, vertices)
-            self.draw_largest_circle(circle)
+            circles = vp.largest_circle(points)
+            self.draw_largest_circle(circles)
 
 
     def clear(self):
@@ -102,7 +99,7 @@ class MainWindow:
         Draw the largest circle(s) on the canvas.
         """
         for center, radius in circles:
-            x, y = center
+            x, y = center.x, center.y
             self.w.create_oval(
                 x - radius, y - radius, x + radius, y + radius,
                 outline=self.CIRCLE_COLOR, width=2

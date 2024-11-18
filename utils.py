@@ -155,3 +155,7 @@ def circle(a, b, c):
     o = Point(ox, oy)
 
     return True, x, o
+
+def distance(point1, point2):
+    """Calculate the Euclidean distance between two points."""
+    return sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)

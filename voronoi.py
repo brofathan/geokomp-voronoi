@@ -158,44 +158,33 @@ class Voronoi:
             point2 = edge.end
             output.append((point1.x, point1.y, point2.x, point2.y))
         return output
-    
-    def print_vertices(self):
-        vertices = []
+
+    def largest_circle(self, sites):
+        """
+        Determine the largest circle that boundaries with at least 3 sites,
+        centered at one of the Voronoi vertices.
+
+        :param sites: List of site tuples (x, y).
+        :param vertices: List of Voronoi vertex tuples (x, y).
+        :return: List of tuples [(center, radius), ...] for the largest circles.
+        """
+        largest_circles = []
+        max_radius = 0
+
         for vertex in self.vertices:
-            vertices.append((vertex.x, vertex.y))
+            # Compute distances to all sites
+            distances = [distance((vertex.x, vertex.y), site) for site in sites]
+            
+            # Sort distances in ascending order and take the third smallest distance
+            distances.sort()
+            radius = distances[2]  # Distance to the third closest site
 
-        return vertices
-    
-def distance(point1, point2):
-    """Calculate the Euclidean distance between two points."""
-    return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
+            if radius > max_radius:
+                # Found a larger radius, reset the largest_circles list
+                max_radius = radius
+                largest_circles = [(vertex, radius)]
+            elif radius == max_radius:
+                # If the radius ties with the max, add to the list
+                largest_circles.append((vertex, radius))
 
-def largest_circle(sites, vertices):
-    """
-    Determine the largest circle that boundaries with at least 3 sites,
-    centered at one of the Voronoi vertices.
-
-    :param sites: List of site tuples (x, y).
-    :param vertices: List of Voronoi vertex tuples (x, y).
-    :return: List of tuples [(center, radius), ...] for the largest circles.
-    """
-    largest_circles = []
-    max_radius = 0
-
-    for vertex in vertices:
-        # Compute distances to all sites
-        distances = [distance(vertex, site) for site in sites]
-        
-        # Sort distances in ascending order and take the third smallest distance
-        distances.sort()
-        radius = distances[2]  # Distance to the third closest site
-
-        if radius > max_radius:
-            # Found a larger radius, reset the largest_circles list
-            max_radius = radius
-            largest_circles = [(vertex, radius)]
-        elif radius == max_radius:
-            # If the radius ties with the max, add to the list
-            largest_circles.append((vertex, radius))
-
-    return largest_circles
+        return largest_circles
