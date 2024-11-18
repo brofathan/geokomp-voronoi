@@ -50,6 +50,11 @@ class Event:
         self.arc = arc
         self.valid = True
 
+    def __lt__(self, other):
+        return self.x < other.x
+
+    def __eq__(self, other):
+        return self.x == other.x
 
 class Edge:
     def __init__(self, point: Point):

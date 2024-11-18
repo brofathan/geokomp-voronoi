@@ -179,8 +179,6 @@ class Voronoi:
             distances.sort()
             radius = distances[2]  # Distance to the third closest site
 
-            print("vertex:", vertex, "radius:", radius)
-
             if radius > max_radius:
                 # Reset the largest_circles list if a larger radius is found 
                 max_radius = radius
