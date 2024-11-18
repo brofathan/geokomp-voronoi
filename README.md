@@ -28,7 +28,7 @@ python gui.py
      ...
      ```
 
-     Kemudian menekan tombol
+     Kemudian menekan tombol input text pada GUI
 
 3. Menekan tombol draw untuk melihat hasil penggambaran diagram voronoi dari titik-titik yang sudah di-plot
 
