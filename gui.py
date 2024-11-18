@@ -8,6 +8,11 @@ class MainWindow:
     # radius of drawn points on canvas
     RADIUS = 3
 
+    # color constants
+    POINT_COLOR = "black"
+    LINE_COLOR = "blue"
+    CIRCLE_COLOR = "green"
+
     # flag to lock the canvas when drawn
     LOCK_FLAG = False
     
@@ -15,38 +20,40 @@ class MainWindow:
         self.master = master
         self.master.title("Voronoi")
 
-        self.frmMain = tk.Frame(self.master, relief=tk.RAISED, borderwidth=1)
-        self.frmMain.pack(fill=tk.BOTH, expand=1)
+        self.main_frame = tk.Frame(self.master, relief=tk.RAISED, borderwidth=1)
+        self.main_frame.pack(fill=tk.BOTH, expand=1)
 
-        self.w = tk.Canvas(self.frmMain, width=500, height=500)
+        self.w = tk.Canvas(self.main_frame, width=700, height=700)
         self.w.config(background='white')
-        self.w.bind('<Double-1>', self.onDoubleClick)
-        self.w.bind('<Motion>', self.showMousePosition)  # Bind mouse motion event
+        self.w.bind('<Button-1>', self.add_point)
+        self.w.bind('<Motion>', self.mouse_position)
         self.w.pack()
 
-        self.lblPosition = tk.Label(self.frmMain, text="Mouse Position: (0, 0)")
-        self.lblPosition.pack(anchor="w")  # Align to the left side
+        self.label_position = tk.Label(self.main_frame, text="Mouse Position: (0, 0)")
+        self.label_position.pack(anchor="w")  
 
-        self.frmButton = tk.Frame(self.master)
-        self.frmButton.pack()
+        self.frame_button = tk.Frame(self.master)
+        self.frame_button.pack()
         
-        self.btnCalculate = tk.Button(self.frmButton, text='Calculate', width=25, command=self.onClickCalculate)
-        self.btnCalculate.pack(side=tk.LEFT)
+        self.draw_button = tk.Button(self.frame_button, text='Draw', width=25, command=self.draw)
+        self.draw_button.pack(side=tk.LEFT)
         
-        self.btnClear = tk.Button(self.frmButton, text='Clear', width=25, command=self.onClickClear)
-        self.btnClear.pack(side=tk.LEFT)
+        self.clear_button = tk.Button(self.frame_button, text='Clear', width=25, command=self.clear)
+        self.clear_button.pack(side=tk.LEFT)
 
-    def showMousePosition(self, event):
+    def mouse_position(self, event):
         """Display the current mouse position on the canvas."""
-        self.lblPosition.config(text=f"Mouse Position: ({event.x}, {event.y})")
+        self.label_position.config(text=f"Mouse Position: ({event.x}, {event.y})")
         
-    def onClickCalculate(self):
+    def draw(self):
         if not self.LOCK_FLAG:
             self.LOCK_FLAG = True
         
-            pObj = self.w.find_all()
+            # Get the list of Point objects that were clicked
+
+            point_object = self.w.find_all()
             points = []
-            for p in pObj:
+            for p in point_object:
                 coord = self.w.coords(p)
                 points.append((coord[0]+self.RADIUS, coord[1]+self.RADIUS))
 
@@ -59,42 +66,46 @@ class MainWindow:
                 points_list.append((site[0], site[1]))
                 sites.append(Point(site[0], site[1]))
 
-            vp = Voronoi(sites)
+            # Create Voronoi diagram
 
+            vp = Voronoi(sites)
             vp.compute()
+
+            # Draw Voronoi edges (lines)
+
             lines = vp.get_output()
-            self.drawLinesOnCanvas(lines)
+            self.draw_lines(lines)
+
+            # Get and draw the largest circle(s) from the Voronoi diagram
 
             vertices = vp.print_vertices()
-            print("Vertices: ",vertices)
-
             circle = largest_circle(points, vertices)
-            print(circle)
-            self.drawLargestCircle(circle)
+            self.draw_largest_circle(circle)
 
 
-    def onClickClear(self):
+    def clear(self):
         self.LOCK_FLAG = False
         self.w.delete(tk.ALL)
 
-    def onDoubleClick(self, event):
+    def add_point(self, event):
+        """Add a point on canvas if not locked."""
         if not self.LOCK_FLAG:
-            self.w.create_oval(event.x-self.RADIUS, event.y-self.RADIUS, event.x+self.RADIUS, event.y+self.RADIUS, fill="black")
+            self.w.create_oval(event.x-self.RADIUS, event.y-self.RADIUS, event.x+self.RADIUS, event.y+self.RADIUS, fill=self.POINT_COLOR)
 
-    def drawLinesOnCanvas(self, lines):
+    def draw_lines(self, lines):
+        """Draw the Voronoi lines."""
         for l in lines:
-            self.w.create_line(l[0], l[1], l[2], l[3], fill='blue')
+            self.w.create_line(l[0], l[1], l[2], l[3], fill=self.LINE_COLOR)
 
-    def drawLargestCircle(self, circles):
+    def draw_largest_circle(self, circles):
         """
         Draw the largest circle(s) on the canvas.
-        :param circles: List of tuples [(center_x, center_y, radius), ...] representing the circles.
         """
         for center, radius in circles:
             x, y = center
             self.w.create_oval(
                 x - radius, y - radius, x + radius, y + radius,
-                outline="green", width=2
+                outline=self.CIRCLE_COLOR, width=2
             )
 
 def main(): 
