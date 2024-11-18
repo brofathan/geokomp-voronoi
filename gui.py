@@ -1,5 +1,5 @@
 import tkinter as tk
-
+import tkinter.filedialog as fd
 from voronoi import Voronoi, Point
 
 class MainWindow:
@@ -39,10 +39,36 @@ class MainWindow:
         self.clear_button = tk.Button(self.frame_button, text='Clear', width=25, command=self.clear)
         self.clear_button.pack(side=tk.LEFT)
 
+        self.text_input_button = tk.Button(self.frame_button, text="Input from File", width=25, command=self.read_input_from_file)
+        self.text_input_button.pack(side=tk.LEFT)
+
     def mouse_position(self, event):
         """Display the current mouse position on the canvas."""
         self.label_position.config(text=f"Mouse Position: ({event.x}, {event.y})")
-        
+
+    def read_input_from_file(self):
+        """Open a file explorer to choose a file and add points to the canvas."""
+        if not self.LOCK_FLAG:
+            file_path = fd.askopenfilename(
+                title="Open Points File",
+                filetypes=[("Text Files", "*.txt")]
+            )
+
+            if file_path:
+                try:
+                    with open(file_path, "r") as file:
+                        for line in file:
+                            line = line.strip()
+                            if line:
+                                x, y = map(float, line.split())
+                                self.w.create_oval(
+                                    x - self.RADIUS, y - self.RADIUS,
+                                    x + self.RADIUS, y + self.RADIUS,
+                                    fill=self.POINT_COLOR
+                                )
+                except Exception as e:
+                    tk.messagebox.showerror("Error", f"Failed to read file: {e}")
+
     def draw(self):
         if not self.LOCK_FLAG:
             self.LOCK_FLAG = True

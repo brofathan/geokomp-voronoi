@@ -22,6 +22,9 @@ class Point:
     def set_y(self, y):
         self.y = y
 
+    def __str__(self):
+        return f"({self.x},{self.y})"
+
 
 class BoundingBox:
     def __init__(self, point1: Point, point2: Point):
