@@ -1,15 +1,15 @@
+# Taken and modified from https://github.com/silas-mohr/Voronoi
 # Inspired by https://www.cs.hmc.edu/~mbrubeck/voronoi.html
 
 from queue import PriorityQueue
 from utils import *
-import math
 
 class Voronoi:
     def __init__(self, sites):
         self.event_queue = PriorityQueue()
         self.beach_line = None  # root of binary tree of parabolic arcs
         self.output = []
-        self.vertices = []  # Daftar untuk menyimpan vertex
+        self.vertices = []  # list of vertices
 
         # bounding box
         x1 = 0.0
@@ -71,7 +71,7 @@ class Voronoi:
                 arc.next.prev = arc.prev
                 arc.next.edge1 = edge
 
-            # finish the edges before and after a
+            # complete the edges
             if arc.edge1 is not None:
                 arc.edge1.complete(event.point)
             if arc.edge2 is not None:
