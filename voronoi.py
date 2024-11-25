@@ -10,6 +10,7 @@ class Voronoi:
         self.beach_line = None  # root of binary tree of parabolic arcs
         self.output = []
         self.vertices = []  # list of vertices
+        self.circles = []
 
         # bounding box
         x1 = 0.0
@@ -131,8 +132,10 @@ class Voronoi:
         arc.event = None
         if arc.prev is None or arc.next is None:
             return
-        flag, x, center = circle(arc.prev.point, arc.point, arc.next.point)
+        flag, x, center, rad = circle(arc.prev.point, arc.point, arc.next.point)
         if flag and x > self.bbox.min.x:
+            data_circle = (center, rad)
+            self.circles.append(data_circle)
             arc.event = Event(x, center, arc, False)
             self.event_queue.put((arc.event.x, arc.event))
 
