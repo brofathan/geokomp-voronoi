@@ -159,10 +159,11 @@ def circle(a, b, c):
     oy = 1.0 * (A * F - C * E) / G
 
     # o.x plus radius equals max x coord
-    x = ox + sqrt((a.x - ox) ** 2 + (a.y - oy) ** 2)
+    rad = sqrt((a.x - ox) ** 2 + (a.y - oy) ** 2)
+    x = ox + rad
     o = Point(ox, oy)
 
-    return True, x, o
+    return True, x, o, rad
 
 def distance(point1, point2):
     """Calculate the Euclidean distance between two points."""

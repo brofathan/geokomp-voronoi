@@ -96,6 +96,7 @@ class MainWindow:
             vp.compute()
 
             # Draw Voronoi edges (lines)
+            print(vp.circles)
 
             lines = vp.get_output()
             self.draw_lines(lines)
